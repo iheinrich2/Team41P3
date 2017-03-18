@@ -47,10 +47,12 @@ public class Reducer {
 
 		Record r = null;
 
-		// list of files for stocking the PQ
+		// new instance of the fileList
 		fileList = new ArrayList<FileIterator>();
 
 		for(int i = 0; i < files.length; i++) {
+			//Variable used to check if the file in the files array at each 
+			//index is a text file
 			File f = files[i];
 			if(f.isFile() && f.getName().endsWith(".txt")) {
 				fileList.add(new FileIterator(f.getAbsolutePath(), i));
@@ -68,7 +70,36 @@ public class Reducer {
 			System.out.println("Invalid type of data! " + type);
 			System.exit(1);
 		}
-
+		
 		// TODO
+		FileLinePriorityQueue queue = new FileLinePriorityQueue
+				(fileList.size(), r.getComparator());
+		try {
+			for (int i = 0; i < fileList.size(); i++) {
+
+				//Take from input files and put into queue
+				queue.insert(fileList.get(i).next());
+			}
+		} catch (PriorityQueueFullException e) {}
+		FileIterator itr = null;
+
+		try {
+			//While the queue has entries, remove the lowest entry and compare
+			//with r, if they match, join the two
+			while (queue.isEmpty() == false) {
+				FileLine minEntry = queue.removeMin();
+				itr = minEntry.getFileIterator();
+				r.join(minEntry);
+			}
+
+	
+
+			queue.insert(itr.next());
+		} catch (PriorityQueueFullException e){
+			e.printStackTrace();
+		} 
+		catch (PriorityQueueEmptyException e) {
+			e.printStackTrace();
+		}
     }
 }
