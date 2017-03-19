@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
@@ -7,6 +8,10 @@ import java.util.Comparator;
 
 public class ThesaurusRecord extends Record {
 	// TODO declare data structures required
+	private String word;
+	private ArrayList<String> synonyms = new ArrayList<String>();
+	String output = "";
+	String[] tempSynArray;
 
 	/**
 	 * Constructs a new ThesaurusRecord by passing the parameter to the parent
@@ -26,12 +31,15 @@ public class ThesaurusRecord extends Record {
 	private class ThesaurusLineComparator implements Comparator<FileLine> {
 		public int compare(FileLine l1, FileLine l2) {
 
+				//gets the string of each file line
 			String s1 = l1.getString();
 			String s2 = l2.getString();
 
+				//splits the string up to the colon and only takes the first string
 			s1 = s1.split(":")[0];
 			s2 = s2.split(":")[0];
 
+				//use normal compare at this point to compare the strings
 			return s1.compareTo(s2);
 			
 		}
@@ -54,7 +62,8 @@ public class ThesaurusRecord extends Record {
 	 * synonyms.
 	 */
 	public void clear() {
-		// TODO initialize/reset data members
+		word = null;
+		synonyms.clear();
 	}
 
 	/**
@@ -63,7 +72,19 @@ public class ThesaurusRecord extends Record {
 	 * ThesaurusRecord's list of synonyms.
 	 */
 	public void join(FileLine w) {
-		// TODO implement join() functionality
+			//set the word
+		String word = w.getString();
+		word = word.split(":")[0];
+		
+			//takes the file line string after : and splits it by , to store all synonyms
+		tempSynArray = word.split(":")[1].split(",");
+		
+			//parses the arraylist for the given synonym, and if it doesn't exist, adds it to the list
+		for (int i = 0; i < 0; ++i) {
+			if (!synonyms.contains(tempSynArray[i])) {
+				synonyms.add(tempSynArray[i]);
+			}
+		}
 	}
 
 	/**
@@ -71,7 +92,11 @@ public class ThesaurusRecord extends Record {
 	 * format.
 	 */
 	public String toString() {
-		// TODO
-		return null;
+		output = word + ":";
+		for (int i = 0; i < tempSynArray.length-1; ++i) {
+			output = output + tempSynArray[i] + ",";
+		}
+		output = output + tempSynArray[tempSynArray.length-1];
+		return output;
 	}
 }
