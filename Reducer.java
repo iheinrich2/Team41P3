@@ -1,3 +1,15 @@
+/////////////////////////////////////////////////////////////////////////////
+// Semester:         CS367 Spring 2017
+// PROJECT:          team41_p3
+// FILE:             WeatherRecord
+//
+// TEAM:    Team 41, IDGAF
+// Authors: 
+// Author1: (Jarrett Benson, jbenson6@wisc.edu, jbenson6, Lec 002)
+// Author2: (Cameron Carlson, ccarlson24@wisc.edu, ccarlson, Lec 002) 
+// Author3: (Isaac Heinrich, iheinrich@wisc.edu, iheinrich, Lec 002)  
+///////////////////////////////////////////////////////////////////////////////
+
 import java.io.*;
 import java.util.*;
 import java.lang.*;
@@ -75,34 +87,72 @@ public class Reducer {
 
 		// TODO
 		FileLinePriorityQueue queue = new FileLinePriorityQueue(fileList.size(), r.getComparator());
+		Comparator<FileLine> cmp = r.getComparator();
+
+		for (int i = 0; i < fileList.size(); i++) {
+			try {
+				queue.insert(fileList.get(i).next());
+			} catch (PriorityQueueFullException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		try {
-
-			for (FileIterator fileIterator : fileList) {
-				while (fileIterator.hasNext()) {
-					FileLine fileLine = fileIterator.next();
-					queue.insert(fileLine);
+			// Create the output writer
+			PrintWriter out = new PrintWriter(outFile);
+			// Initialize the last entry in the record.
+			FileLine last = queue.removeMin();
+			r.join(last);
+			if (fileList.get(last.getFileIterator().getIndex()).hasNext())
+				queue.insert(fileList.get(last.getFileIterator().getIndex()).next());
+			while (!queue.isEmpty()) {
+				FileLine joinfl = queue.removeMin();
+				if (cmp.compare(joinfl, last) == 0) {
+					r.join(joinfl);
+					last = joinfl;
+					if (fileList.get(last.getFileIterator().getIndex()).hasNext())
+						queue.insert(fileList.get(last.getFileIterator().getIndex()).next());
+				} else {
+					// write record to the output file
+					out.println(r.toString());
+					r.clear();
+					r.join(joinfl);
+					last = joinfl;
+					if (fileList.get(last.getFileIterator().getIndex()).hasNext())
+						queue.insert(fileList.get(last.getFileIterator().getIndex()).next());
 				}
-			}
 
-			File file = new File(outFile);
-			PrintWriter printWriter = new PrintWriter(outFile);
-			// While the queue has entries, remove the lowest entry and compare
-			// with r, if they match, join the two
-			while (queue.isEmpty() == false) {
-				FileLine minEntry = queue.removeMin();
-				System.out.println(minEntry.getString());
-				r.join(minEntry);
-				printWriter.print(r.toString());
 			}
-			printWriter.print(r.toString());
-			r.clear();
-			
-		} catch (PriorityQueueFullException e) {
-			e.printStackTrace();
+			out.println(r.toString());
+			out.flush();
+			out.close();
+
 		} catch (PriorityQueueEmptyException e) {
+			e.printStackTrace();
+		} catch (PriorityQueueFullException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+
+		/*
+		 * try {
+		 * 
+		 * for (FileIterator fileIterator : fileList) { while
+		 * (fileIterator.hasNext()) { FileLine fileLine = fileIterator.next();
+		 * queue.insert(fileLine); } }
+		 * 
+		 * File file = new File(outFile); PrintWriter printWriter = new
+		 * PrintWriter(outFile); // While the queue has entries, remove the
+		 * lowest entry and compare // with r, if they match, join the two while
+		 * (queue.isEmpty() == false) { FileLine minEntry = queue.removeMin();
+		 * System.out.println(minEntry.getString()); r.join(minEntry);
+		 * printWriter.print(r.toString()); } printWriter.print(r.toString());
+		 * r.clear();
+		 * 
+		 * } catch (PriorityQueueFullException e) { e.printStackTrace(); } catch
+		 * (PriorityQueueEmptyException e) { e.printStackTrace(); } catch
+		 * (FileNotFoundException e) { e.printStackTrace(); }
+		 */
 	}
 }
