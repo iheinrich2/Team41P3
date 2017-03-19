@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.io.PrintWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * The ThesaurusRecord class is the child class of Record to be used when
@@ -8,10 +11,12 @@ import java.util.Comparator;
 
 public class ThesaurusRecord extends Record {
 	// TODO declare data structures required
+	FileLine line;
 	private String word;
-	private ArrayList<String> synonyms = new ArrayList<String>();
-	String output = "";
-	String[] tempSynArray;
+	private ArrayList<String> synonyms;
+	private String returnString = "";
+	private String returnSynonyms = "";
+	private File output;
 
 	/**
 	 * Constructs a new ThesaurusRecord by passing the parameter to the parent
@@ -31,15 +36,12 @@ public class ThesaurusRecord extends Record {
 	private class ThesaurusLineComparator implements Comparator<FileLine> {
 		public int compare(FileLine l1, FileLine l2) {
 
-				//gets the string of each file line
 			String s1 = l1.getString();
 			String s2 = l2.getString();
 
-				//splits the string up to the colon and only takes the first string
 			s1 = s1.split(":")[0];
 			s2 = s2.split(":")[0];
 
-				//use normal compare at this point to compare the strings
 			return s1.compareTo(s2);
 			
 		}
@@ -72,19 +74,31 @@ public class ThesaurusRecord extends Record {
 	 * ThesaurusRecord's list of synonyms.
 	 */
 	public void join(FileLine w) {
-			//set the word
-		String word = w.getString();
-		word = word.split(":")[0];
 		
-			//takes the file line string after : and splits it by , to store all synonyms
-		tempSynArray = word.split(":")[1].split(",");
+		output = new File("output.txt");
+		PrintWriter printWriter = null;
+		try {
+			printWriter = new PrintWriter("output.txt");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		
-			//parses the arraylist for the given synonym, and if it doesn't exist, adds it to the list
-		for (int i = 0; i < 0; ++i) {
-			if (!synonyms.contains(tempSynArray[i])) {
-				synonyms.add(tempSynArray[i]);
+		String[] line = w.getString().split(":");
+		String[] tempsyn = line[1].split(",");
+		
+		if (line[0] == word) {
+			for (int i = 0; i < tempsyn.length; ++i) {
+				if (!synonyms.contains(tempsyn[i])) {
+					synonyms.add(tempsyn[i]);
+				}
 			}
 		}
+		
+		else {
+			printWriter.println(this.toString());
+		}
+		
+		// TODO implement join() functionality
 	}
 
 	/**
@@ -92,11 +106,12 @@ public class ThesaurusRecord extends Record {
 	 * format.
 	 */
 	public String toString() {
-		output = word + ":";
-		for (int i = 0; i < tempSynArray.length-1; ++i) {
-			output = output + tempSynArray[i] + ",";
+		for (int i = 0; i < synonyms.size()-1; ++i) {
+			returnSynonyms = returnSynonyms + synonyms.get(i) + ",";
 		}
-		output = output + tempSynArray[tempSynArray.length-1];
-		return output;
+		returnSynonyms = returnSynonyms + synonyms.get(synonyms.size()-1);
+		returnString = word + ";" + returnSynonyms;
+		
+		return returnString;
 	}
 }

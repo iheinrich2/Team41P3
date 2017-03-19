@@ -11,6 +11,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.io.PrintWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+
 
 /**
  * The WeatherRecord class is the child class of Record to be used when merging weather data. Station and Date
@@ -23,6 +27,8 @@ public class WeatherRecord extends Record{
 	private int station;
 	int date;
 	private ArrayList<Double> readings;
+	private String returnString = "";
+	private File output;
 	
 	/**
 	 * Constructs a new WeatherRecord by passing the parameter to the parent constructor
@@ -96,6 +102,14 @@ public class WeatherRecord extends Record{
 	 */
     public void join(FileLine li) {
     	
+    	output = new File("output.txt");
+		PrintWriter printWriter = null;
+		try {
+			printWriter = new PrintWriter("output.txt");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+    	
     	//create an array of the strings in FileLine line
     	String[] line = li.getString().split(",");
     	
@@ -122,6 +136,7 @@ public class WeatherRecord extends Record{
     		//if the station and date does not contain a reading for this file (aka reading type (i.e. DEWP, TEMP, etc.)), add a
     		//null element to be turned into a '-' later.
     		else readings.add(null);
+    		printWriter.println(this.toString());
     	}
     	
     	
@@ -133,8 +148,8 @@ public class WeatherRecord extends Record{
     public String toString() {
 		// TODO
 		for (int i = 0; i < readings.size(); i++){
-			System.out.print(station + "," + date + "," + readings.get(i));
+			returnString = returnString + station + "," + date + "," + readings.get(i) + "\n";
 		}
-		return null;
+		return returnString;
     }
 }
