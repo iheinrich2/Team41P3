@@ -29,7 +29,6 @@ public class WeatherRecord extends Record{
 	private ArrayList<Double> readings;
 	private String returnString = "";
 	private File output;
-	private String outputname;
 	
 	/**
 	 * Constructs a new WeatherRecord by passing the parameter to the parent constructor
@@ -103,10 +102,10 @@ public class WeatherRecord extends Record{
 	 */
     public void join(FileLine li) {
     	
-    	output = new File(outputname);
+    	output = new File(Reducer.outFile);
 		PrintWriter printWriter = null;
 		try {
-			printWriter = new PrintWriter(outputname);
+			printWriter = new PrintWriter(Reducer.outFile);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -153,8 +152,4 @@ public class WeatherRecord extends Record{
 		}
 		return returnString;
     }
-    
-    public void setOutput(String output) {
-		this.outputname = output;
-	}
 }
