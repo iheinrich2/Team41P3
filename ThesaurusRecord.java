@@ -1,3 +1,15 @@
+/////////////////////////////////////////////////////////////////////////////
+// Semester:         CS367 Spring 2017
+// PROJECT:          team41_p3
+// FILE:             WeatherRecord
+//
+// TEAM:    Team 41, IDGAF
+// Authors: 
+// Author1: (Jarrett Benson, jbenson6@wisc.edu, jbenson6, Lec 002)
+// Author2: (Cameron Carlson, ccarlson24@wisc.edu, ccarlson, Lec 002) 
+// Author3: (Isaac Heinrich, iheinrich@wisc.edu, iheinrich, Lec 002)  
+///////////////////////////////////////////////////////////////////////////////
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.io.PrintWriter;
@@ -43,7 +55,7 @@ public class ThesaurusRecord extends Record {
 			s1 = s1.split(":")[0];
 			s2 = s2.split(":")[0];
 
-			return s1.compareTo(s2);
+			return s1.compareTo(s2);	//compares the word of each fileline
 			
 		}
 
@@ -76,6 +88,7 @@ public class ThesaurusRecord extends Record {
 	 */
 	public void join(FileLine w) {
 		
+		//creates the file and printwriter
 		output = new File(outputname);
 		PrintWriter printWriter = null;
 		try {
@@ -84,10 +97,13 @@ public class ThesaurusRecord extends Record {
 			e.printStackTrace();
 		}
 		
+		//splits w's data into useable parts
 		String[] line = w.getString().split(":");
 		String[] tempsyn = line[1].split(",");
 		
+		//merges w if the word's match
 		if (line[0] == word) {
+			//adds each synonym to the list if it doesn't already exist
 			for (int i = 0; i < tempsyn.length; ++i) {
 				if (!synonyms.contains(tempsyn[i])) {
 					synonyms.add(tempsyn[i]);
@@ -96,6 +112,7 @@ public class ThesaurusRecord extends Record {
 		}
 		
 		else {
+			//if the words don't match, write the word and synonyms to output
 			printWriter.println(this.toString());
 		}
 		
@@ -107,6 +124,7 @@ public class ThesaurusRecord extends Record {
 	 * format.
 	 */
 	public String toString() {
+		//adds the synonyms to the return string and formats everything
 		for (int i = 0; i < synonyms.size()-1; ++i) {
 			returnSynonyms = returnSynonyms + synonyms.get(i) + ",";
 		}
@@ -116,6 +134,9 @@ public class ThesaurusRecord extends Record {
 		return returnString;
 	}
 	
+	/**
+	 * used to set the output files name
+	 */
 	public void setOutput(String output) {
 		this.outputname = output;
 	}
