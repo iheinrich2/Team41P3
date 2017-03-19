@@ -17,6 +17,7 @@ public class ThesaurusRecord extends Record {
 	private String returnString = "";
 	private String returnSynonyms = "";
 	private File output;
+	private String outputname;
 
 	/**
 	 * Constructs a new ThesaurusRecord by passing the parameter to the parent
@@ -75,10 +76,10 @@ public class ThesaurusRecord extends Record {
 	 */
 	public void join(FileLine w) {
 		
-		output = new File("output.txt");
+		output = new File(outputname);
 		PrintWriter printWriter = null;
 		try {
-			printWriter = new PrintWriter("output.txt");
+			printWriter = new PrintWriter(outputname);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -113,5 +114,9 @@ public class ThesaurusRecord extends Record {
 		returnString = word + ";" + returnSynonyms;
 		
 		return returnString;
+	}
+	
+	public void setOutput(String output) {
+		this.outputname = output;
 	}
 }
