@@ -100,16 +100,13 @@ public class WeatherRecord extends Record {
 	public void join(FileLine li) {
 
 		// get the station and date.
-		int Stationi = Integer.parseInt(li.getString().split(",")[0]);
-		int Datei = Integer.parseInt(li.getString().split(",")[1]);
-		double Reading = Double.parseDouble(li.getString().split(",")[2]);
 		// merge the readings also handle the empty record merging.
 		if (station == 0 && date == 0) {
-			station = Stationi;
-			date = Datei;
-			readings[li.getFileIterator().getIndex()] = Reading;
+			station = Integer.parseInt(li.getString().split(",")[0]);
+			date = Integer.parseInt(li.getString().split(",")[1]);
+			readings[li.getFileIterator().getIndex()] = Double.parseDouble(li.getString().split(",")[2]);
 		} else {
-			readings[li.getFileIterator().getIndex()] = Reading;
+			readings[li.getFileIterator().getIndex()] = Double.parseDouble(li.getString().split(",")[2]);
 		}
 
 	}
@@ -119,18 +116,21 @@ public class WeatherRecord extends Record {
 	 * format.
 	 */
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		// build the formatted String.
-		String stationStr = String.valueOf(station);
-		String dateStr = String.valueOf(date);
-		sb.append(stationStr + ",");
-		sb.append(dateStr);
-		for (int i = 0; i < getNumFiles(); i++) {
-			if (readings[i] == Double.MIN_VALUE)
-				sb.append(",-");
-			else
-				sb.append("," + readings[i]);
+		
+		
+		String returnString = "";
+		String returnReadings = "";
+		returnString = returnString + station + "," + date;
+		for (int i = 0; i < readings.length; ++i) {
+			if (readings[i] == Double.MIN_VALUE) {
+				returnReadings = returnReadings + "," + "-";
+			}
+			else {
+				returnReadings = returnReadings + "," + readings[i];
+			}
 		}
-		return sb.toString();
+		returnString = returnString + returnReadings;
+		
+		return returnString;
 	}
 }
