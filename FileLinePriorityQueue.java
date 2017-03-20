@@ -1,4 +1,3 @@
-
 /////////////////////////////////////////////////////////////////////////////
 // Semester:         CS367 Spring 2017
 // PROJECT:          team41_p3
@@ -20,25 +19,38 @@ import java.util.Comparator;
  *
  */
 public class FileLinePriorityQueue implements MinPriorityQueueADT<FileLine> {
-	// TODO
+	//Priority queue to be used and modified throughout 
 	private FileLine[] queue;
+	//Comparator to be used to compare items in queue
 	private Comparator<FileLine> cmp;
+	//Int to keep track of the maximum size of queue
 	private int maxSize;
+	//Int to keep track of the number of items in the queue
 	private int numItems;
 
+	
+	/**
+	 * Constructor for the FileLinePriorityQueue class, creates new instance and takes
+	 * in the initial size and comparator to be used
+	 * @param initialSize the initial size of the queue
+	 * @param cmp the comparator used to compare items
+	 */
 	public FileLinePriorityQueue(int initialSize, Comparator<FileLine> cmp) {
 		this.cmp = cmp;
 		maxSize = initialSize;
 		queue = new FileLine[maxSize + 1];
 		numItems = 0;
-		// TODO
 	}
 
+	/**
+	 * Method that removes the minimum element from the Priority Queue, and returns it.
+	 * @return returnLine, the 
+	 */
 	public FileLine removeMin() throws PriorityQueueEmptyException {
-		// TODO
 		if (numItems <= 0)
 			throw new PriorityQueueEmptyException();
-
+		
+		//FileLine that will be returned as it is minimum
 		FileLine returnLine = queue[1];
 		swap(1, numItems);
 		queue[numItems--] = null;
@@ -49,8 +61,11 @@ public class FileLinePriorityQueue implements MinPriorityQueueADT<FileLine> {
 		return returnLine;
 	}
 
+	/**
+	 * Inserts a FileLine into the queue, while keeping the shape 
+	 * and order properties intact.
+	 */
 	public void insert(FileLine fl) throws PriorityQueueFullException {
-		// TODO
 		if (numItems == maxSize)
 			throw new PriorityQueueFullException();
 
@@ -61,24 +76,27 @@ public class FileLinePriorityQueue implements MinPriorityQueueADT<FileLine> {
 		while (reheapify(curr /= 2) > 0);
 	}
 
+	/**
+	 * Method to check if queue is empty
+	 * @return true if it is empty, false if not
+	 */
 	public boolean isEmpty() {
-		// TODO
 		return (numItems == 0);
 	}
 
 	/**
 	 * Compare the parent at index with its children to adjust the three nodes
-	 * so that parent <= left <= right
+	 * so that parent <= left which is <= right
 	 * 
-	 * @param parent
-	 *            the index of the parent
+	 * @param parent is the index of the parent item
 	 * @return next index to be altered, 0 if done
 	 */
 	private int reheapify(int parent) {
-		// cannot reheapify 0
+
 		if (parent == 0)
 			return 0;
-
+		
+		
 		int left = parent * 2;
 		int right = parent * 2 + 1;
 		int next = 0;
@@ -104,6 +122,7 @@ public class FileLinePriorityQueue implements MinPriorityQueueADT<FileLine> {
      * @param j the second index to be swapped
      */
     private void swap(int i, int j) {
+    	//Temporary FileLine to help swap the two parameters
     	FileLine tmp = queue[i];
     	queue[i] = queue[j];
     	queue[j] = tmp;
