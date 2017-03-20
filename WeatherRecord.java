@@ -10,7 +10,6 @@
 // Author2: (Cameron Carlson, ccarlson24@wisc.edu, ccarlson, Lec 002) 
 // Author3: (Isaac Heinrich, iheinrich@wisc.edu, iheinrich, Lec 002)  
 ///////////////////////////////////////////////////////////////////////////////
-import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
@@ -24,8 +23,7 @@ public class WeatherRecord extends Record {
 	FileLine line;
 	private int station;
 	int date;
-	private ArrayList<Double> readings;
-	private String returnString = "";
+	private double[] readings;
 
 	/**
 	 * Constructs a new WeatherRecord by passing the parameter to the parent
@@ -33,6 +31,7 @@ public class WeatherRecord extends Record {
 	 */
 	public WeatherRecord(int numFiles) {
 		super(numFiles);
+		readings = new double[numFiles];
 		clear();
 	}
 
@@ -82,13 +81,11 @@ public class WeatherRecord extends Record {
 	 */
 	public void clear() {
 		// TODO initialize/reset data members
-		try {
-			for (int i = 0; i < readings.size(); i++)
-				readings.set(i, Double.MIN_VALUE);
-		} catch (NullPointerException e) {
-			// nullPointerException is caught
+		station = 0;
+		date = 0;
+		for (int i = 0; i < readings.length; i++) {
+			readings[i] = Double.MIN_VALUE;
 		}
-
 	}
 
 	/**
@@ -102,36 +99,17 @@ public class WeatherRecord extends Record {
 	 */
 	public void join(FileLine li) {
 
-		// create an array of the strings in FileLine line
-		String[] line = li.getString().split(",");
-
-		if (station == 0 && date == 0 && readings.size() == 0) {
-			this.line = li;
-			this.station = Integer.parseInt(line[0]);
-			this.date = Integer.parseInt(line[1]);
-			for (int i = 2; i < line.length; i++) {
-				readings.add(Double.parseDouble(line[i]));
-
-				// if I took the data from the top of the file containing
-				// FileLine li, iterate li's iterator
-				li.getFileIterator().next();
-			}
+		// get the station and date.
+		int Stationi = Integer.parseInt(li.getString().split(",")[0]);
+		int Datei = Integer.parseInt(li.getString().split(",")[1]);
+		double Reading = Double.parseDouble(li.getString().split(",")[2]);
+		// merge the readings also handle the empty record merging.
+		if (station == 0 && date == 0) {
+			station = Stationi;
+			date = Datei;
+			readings[li.getFileIterator().getIndex()] = Reading;
 		} else {
-			if (Integer.parseInt(li.getString().split(",")[0]) == this.station
-					&& Integer.parseInt(li.getString().split(",")[1]) == this.date) {
-				for (int i = 2; i < line.length; i++) {
-					readings.add(Double.parseDouble(line[i]));
-
-					// if I took the data from the top of the file containing
-					// FileLine li, iterate li's iterator
-					li.getFileIterator().next();
-				}
-			}
-			// if the station and date does not contain a reading for this file
-			// (aka reading type (i.e. DEWP, TEMP, etc.)), add a
-			// null element to be turned into a '-' later.
-			else
-				readings.add(null);
+			readings[li.getFileIterator().getIndex()] = Reading;
 		}
 
 	}
@@ -141,10 +119,18 @@ public class WeatherRecord extends Record {
 	 * format.
 	 */
 	public String toString() {
-		// TODO
-		for (int i = 0; i < readings.size(); i++) {
-			returnString = returnString + station + "," + date + "," + readings.get(i) + "\n";
+		StringBuilder sb = new StringBuilder();
+		// build the formatted String.
+		String stationStr = String.valueOf(station);
+		String dateStr = String.valueOf(date);
+		sb.append(stationStr + ",");
+		sb.append(dateStr);
+		for (int i = 0; i < getNumFiles(); i++) {
+			if (readings[i] == Double.MIN_VALUE)
+				sb.append(",-");
+			else
+				sb.append("," + readings[i]);
 		}
-		return returnString;
+		return sb.toString();
 	}
 }

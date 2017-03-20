@@ -25,8 +25,6 @@ public class ThesaurusRecord extends Record {
 	FileLine line;
 	private String word;
 	private ArrayList<String> synonyms;
-	private String returnString = "";
-	private String returnSynonyms = "";
 
 	/**
 	 * Constructs a new ThesaurusRecord by passing the parameter to the parent
@@ -75,7 +73,7 @@ public class ThesaurusRecord extends Record {
 	 */
 	public void clear() {
 		word = null;
-		synonyms.clear();
+		synonyms = new ArrayList<String>();
 	}
 
 	/**
@@ -116,6 +114,8 @@ public class ThesaurusRecord extends Record {
 	 * format.
 	 */
 	public String toString() {
+		String returnString = "";
+		String returnSynonyms = "";
 		// adds the synonyms to the return string and formats everything
 		for (int i = 0; i < synonyms.size() - 1; ++i) {
 			returnSynonyms = returnSynonyms + synonyms.get(i) + ",";
