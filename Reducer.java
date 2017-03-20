@@ -25,24 +25,30 @@ public class Reducer {
 	private String type, dirName, outFile;
 
 	public static void main(String[] args) {
+		
 		if (args.length != 3) {
 			System.out.println("Usage: java Reducer <weather|thesaurus> <dir_name> <output_file>");
 			System.exit(1);
 		}
-
+		
+		//Strings storing the value of the arguments passed in to be used to run the program
 		String type = args[0];
 		String dirName = args[1];
 		String outFile = args[2];
 
+		//New instance of reducer to use to run, passing in the arguments
 		Reducer r = new Reducer(type, dirName, outFile);
 		r.run();
 
 	}
 
 	/**
-	 * Constructs a new instance of Reducer with the given type (a string
-	 * indicating which type of data is being merged), the directory which
-	 * contains the files to be merged, and the name of the output file.
+
+	 * Constructor for the Reducer class, constructing a new instance with the type of data, 
+	 * the directory that has the files, and the output files name.
+	 * @param type is the type of data used in file 
+	 * @param dirName is the directory that contains the files
+	 * @param outFile is the name of the output file
 	 */
 	public Reducer(String type, String dirName, String outFile) {
 		this.type = type;
@@ -51,11 +57,12 @@ public class Reducer {
 	}
 
 	/**
-	 * Carries out the file merging algorithm described in the assignment
-	 * description.
+	 * Method used to run the program, merges files taken in and creates output 
 	 */
 	public void run() {
+		//New file with the directory being passed in
 		File dir = new File(dirName);
+		//Array of files 
 		File[] files = dir.listFiles();
 		Arrays.sort(files);
 
@@ -84,9 +91,10 @@ public class Reducer {
 			System.out.println("Invalid type of data! " + type);
 			System.exit(1);
 		}
-
-		// TODO
+		
+		//Queue to add from fileList
 		FileLinePriorityQueue queue = new FileLinePriorityQueue(fileList.size(), r.getComparator());
+		//New comparator to compare FileLines
 		Comparator<FileLine> cmp = r.getComparator();
 
 		for (int i = 0; i < fileList.size(); i++) {
@@ -103,10 +111,16 @@ public class Reducer {
 			// Initialize the last entry in the record.
 			FileLine last = queue.removeMin();
 			r.join(last);
-			if (fileList.get(last.getFileIterator().getIndex()).hasNext())
+			
+			//If last's index hasNext, insert that next into the queue
+			if (fileList.get(last.getFileIterator().getIndex()).hasNext()) 
 				queue.insert(fileList.get(last.getFileIterator().getIndex()).next());
+			
+			
 			while (!queue.isEmpty()) {
 				FileLine joinfl = queue.removeMin();
+				
+				//if the min in queue is the same as last join the two
 				if (cmp.compare(joinfl, last) == 0) {
 					r.join(joinfl);
 					last = joinfl;
@@ -135,24 +149,5 @@ public class Reducer {
 			e.printStackTrace();
 		}
 
-		/*
-		 * try {
-		 * 
-		 * for (FileIterator fileIterator : fileList) { while
-		 * (fileIterator.hasNext()) { FileLine fileLine = fileIterator.next();
-		 * queue.insert(fileLine); } }
-		 * 
-		 * File file = new File(outFile); PrintWriter printWriter = new
-		 * PrintWriter(outFile); // While the queue has entries, remove the
-		 * lowest entry and compare // with r, if they match, join the two while
-		 * (queue.isEmpty() == false) { FileLine minEntry = queue.removeMin();
-		 * System.out.println(minEntry.getString()); r.join(minEntry);
-		 * printWriter.print(r.toString()); } printWriter.print(r.toString());
-		 * r.clear();
-		 * 
-		 * } catch (PriorityQueueFullException e) { e.printStackTrace(); } catch
-		 * (PriorityQueueEmptyException e) { e.printStackTrace(); } catch
-		 * (FileNotFoundException e) { e.printStackTrace(); }
-		 */
 	}
 }
