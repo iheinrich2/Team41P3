@@ -43,7 +43,8 @@ public class ThesaurusRecord extends Record {
 	 */
 	private class ThesaurusLineComparator implements Comparator<FileLine> {
 		public int compare(FileLine l1, FileLine l2) {
-
+			
+			//gets the strings and splits them to get the word
 			String s1 = l1.getString();
 			String s2 = l2.getString();
 
@@ -87,23 +88,26 @@ public class ThesaurusRecord extends Record {
 		String[] line = w.getString().split(":");
 		String[] tempsyn = line[1].split(",");
 
-		// merges w if the word's match
+		// if the word is null, then the record was just made and needs the key set
 		if (word == null) {
 			word = line[0];
-			// adds each synonym to the list if it doesn't already exist
+			// adds all synonyms to the list since it started empty
 			for (int i = 0; i < tempsyn.length; ++i) {
 					synonyms.add(tempsyn[i]);
 			}
 		}
 		
+		// if the word exists, then we are adding to an existing list
 		else {
 			for (int i = 0; i < tempsyn.length; ++i) {
+				// check if the list already contains the synonym
 				if (!synonyms.contains(tempsyn[i])) {
 					synonyms.add(tempsyn[i]);
 				}
 			}
 		}
 		
+		//sort the list of synonyms as per instructions
 		Collections.sort(synonyms);
 		
 		// TODO implement join() functionality
@@ -114,13 +118,15 @@ public class ThesaurusRecord extends Record {
 	 * format.
 	 */
 	public String toString() {
-		String returnString = "";
-		String returnSynonyms = "";
-		// adds the synonyms to the return string and formats everything
+		String returnString = "";	//string to be returned
+		String returnSynonyms = "";	//synonyms that need to be added to the return string
+		// adds the synonyms to the string
 		for (int i = 0; i < synonyms.size() - 1; ++i) {
 			returnSynonyms = returnSynonyms + synonyms.get(i) + ",";
 		}
+		//the last one can't have a "," at the end
 		returnSynonyms = returnSynonyms + synonyms.get(synonyms.size() - 1);
+		//add it all to the return string with newlines
 		returnString = word + ":" + returnSynonyms + "\n";
 
 		return returnString;
