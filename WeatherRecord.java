@@ -1,3 +1,4 @@
+
 /////////////////////////////////////////////////////////////////////////////
 // Semester:         CS367 Spring 2017
 // PROJECT:          team41_p3
@@ -9,7 +10,6 @@
 // Author2: (Cameron Carlson, ccarlson24@wisc.edu, ccarlson, Lec 002) 
 // Author3: (Isaac Heinrich, iheinrich@wisc.edu, iheinrich, Lec 002)  
 ///////////////////////////////////////////////////////////////////////////////
-import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
@@ -19,37 +19,27 @@ import java.util.Comparator;
  * in the same order as the files from which they came are indexed.
  */
 public class WeatherRecord extends Record {
-	//FileLine used later to store a passed in FileLine in join
+	// TODO declare data structures required
 	FileLine line;
-	//Station associated with weather reading
 	private int station;
-	//Date associated with weather reading
 	int date;
-	//ArrayList used to add and remove readings 
-	private ArrayList<Double> readings;
-	//String used later in toString to be returned
-	private String returnString = "";
+	private double[] readings;
 
 	/**
-	 * Constructor for the ThesaurusRecord class that passes its parameter to the parent
-	 * constructor and calls clear.
+	 * Constructs a new WeatherRecord by passing the parameter to the parent
+	 * constructor and then calling the clear method()
 	 */
 	public WeatherRecord(int numFiles) {
 		super(numFiles);
+		readings = new double[numFiles];
 		clear();
 	}
 
 	/**
-	 * Comparator used to compare stations associated with the passed in FileLines,
-	 * the stations are the same then their dates are compared.
+	 * This comparator should first compare the stations associated with the
+	 * given FileLines. If they are the same, then the dates should be compared.
 	 */
 	private class WeatherLineComparator implements Comparator<FileLine> {
-		
-		/**
-		 * Method used to compare two FileLines passed in 
-		 * @return either the result of comparing the two dates
-		 * or the result of the two stations being compared
-		 */
 		public int compare(FileLine l1, FileLine l2) {
 			// split the first line in order to access station and date
 			// information
@@ -72,10 +62,6 @@ public class WeatherRecord extends Record {
 			}
 		}
 
-		/**
-		 * Method to check if something is equal to the object passed in
-		 * @return true if it does equal the passed in object, false if not
-		 */
 		public boolean equals(Object o) {
 			return this.equals(o);
 		}
@@ -90,60 +76,61 @@ public class WeatherRecord extends Record {
 	}
 
 	/**
-	 * Method to set each entry containing the readings to Double.MIN_VALUE
+	 * This method should fill each entry in the data structure containing the
+	 * readings with Double.MIN_VALUE
 	 */
 	public void clear() {
-		try {
-			for (int i = 0; i < readings.size(); i++)
-				readings.set(i, Double.MIN_VALUE);
-		} catch (NullPointerException e) {
-			// nullPointerException is caught
+		// TODO initialize/reset data members
+		station = 0;
+		date = 0;
+		for (int i = 0; i < readings.length; i++) {
+			readings[i] = Double.MIN_VALUE;
 		}
-
 	}
 
 	/**
-	 * Method to parse the string given with the passed in FileLine to get the date, 
-	 * station and reading. 
+	 * This method should parse the String associated with the given FileLine to
+	 * get the station, date, and reading contained therein. Then, in the data
+	 * structure holding each reading, the entry with index equal to the
+	 * parameter FileLine's index should be set to the value of the reading.
+	 * Also, so that this method will handle merging when this WeatherRecord is
+	 * empty, the station and date associated with this WeatherRecord should be
+	 * set to the station and date values which were similarly parsed.
 	 */
 	public void join(FileLine li) {
 
-		// create an array of the strings in FileLine line
-		String[] line = li.getString().split(",");
-
-		if (station == 0 && date == 0 && readings.size() == 0) {
-			this.line = li;
-			this.station = Integer.parseInt(line[0]);
-			this.date = Integer.parseInt(line[1]);
-			for (int i = 2; i < line.length; i++) {
-				readings.add(Double.parseDouble(line[i]));
-				li.getFileIterator().next();
-			}
+		// get the station and date.
+		// merge the readings also handle the empty record merging.
+		if (station == 0 && date == 0) {
+			station = Integer.parseInt(li.getString().split(",")[0]);
+			date = Integer.parseInt(li.getString().split(",")[1]);
+			readings[li.getFileIterator().getIndex()] = Double.parseDouble(li.getString().split(",")[2]);
 		} else {
-			if (Integer.parseInt(li.getString().split(",")[0]) == this.station
-					&& Integer.parseInt(li.getString().split(",")[1]) == this.date) {
-				for (int i = 2; i < line.length; i++) {
-					readings.add(Double.parseDouble(line[i]));				
-					li.getFileIterator().next();
-				}
-			}
-			// if the station and date do not contain a reading, add a
-			// null element to the readings
-			else
-				readings.add(null);
+			readings[li.getFileIterator().getIndex()] = Double.parseDouble(li.getString().split(",")[2]);
 		}
 
 	}
 
 	/**
-	 * toString method for the WeatherRecord class, generates the string representation
-	 * of the class
-	 * @return returnString, returns the properly formatted 
+	 * See the assignment description and example runs for the exact output
+	 * format.
 	 */
 	public String toString() {
-		for (int i = 0; i < readings.size(); i++) {
-			returnString = returnString + station + "," + date + "," + readings.get(i) + "\n";
+		
+		
+		String returnString = "";
+		String returnReadings = "";
+		returnString = returnString + station + "," + date;
+		for (int i = 0; i < readings.length; ++i) {
+			if (readings[i] == Double.MIN_VALUE) {
+				returnReadings = returnReadings + "," + "-";
+			}
+			else {
+				returnReadings = returnReadings + "," + readings[i];
+			}
 		}
+		returnString = returnString + returnReadings;
+		
 		return returnString;
 	}
 }

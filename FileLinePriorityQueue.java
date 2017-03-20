@@ -1,3 +1,16 @@
+
+/////////////////////////////////////////////////////////////////////////////
+// Semester:         CS367 Spring 2017
+// PROJECT:          team41_p3
+// FILE:             WeatherRecord
+//
+// TEAM:    Team 41, IDGAF
+// Authors: 
+// Author1: (Jarrett Benson, jbenson6@wisc.edu, jbenson6, Lec 002)
+// Author2: (Cameron Carlson, ccarlson24@wisc.edu, ccarlson, Lec 002) 
+// Author3: (Isaac Heinrich, iheinrich@wisc.edu, iheinrich, Lec 002)  
+///////////////////////////////////////////////////////////////////////////////
+
 import java.util.Comparator;
 
 /**
@@ -7,73 +20,92 @@ import java.util.Comparator;
  *
  */
 public class FileLinePriorityQueue implements MinPriorityQueueADT<FileLine> {
-	//PriorityQueue to be used and modified for the program
+	// TODO
 	private FileLine[] queue;
-	//Comparator used to compare different objects within queue
 	private Comparator<FileLine> cmp;
-	//Int used to declare the maxSize of the queue
 	private int maxSize;
-	//Int used to keep track of the # of items in the queue
 	private int numItems;
 
-	/**
-	 * Constructor for the FileLinePriorityQueue class, takes in the initial size 
-	 * for the queue and the comparator to be used
-	 * @param initialSize the initial size for the queue
-	 * @param cmp the type of comparator to be used 
-	 */
 	public FileLinePriorityQueue(int initialSize, Comparator<FileLine> cmp) {
 		this.cmp = cmp;
 		maxSize = initialSize;
-		queue = new FileLine[maxSize];
+		queue = new FileLine[maxSize + 1];
 		numItems = 0;
-	
+		// TODO
 	}
 
-	/**
-	 * Removes the minimum element from the Priority Queue, and returns it.
-	 * @return the minimum element from the queue
-	 */
 	public FileLine removeMin() throws PriorityQueueEmptyException {
-		// 
+		// TODO
 		if (numItems <= 0)
 			throw new PriorityQueueEmptyException();
-		//temporary FileLine to take in the minimum element and be returned
-		FileLine temp = queue[0];
-		queue[0] = null;
-		numItems--;
-		return temp;
+
+		FileLine returnLine = queue[1];
+		swap(1, numItems);
+		queue[numItems--] = null;
+
+		int curr = 1;
+		while ((curr = reheapify(curr)) > 0);
+
+		return returnLine;
 	}
 
-	/**
-	 * Inserts a FileLine into the queue, while keeping its
-	 * shape and order properties intact.
-	 */
 	public void insert(FileLine fl) throws PriorityQueueFullException {
+		// TODO
 		if (numItems == maxSize)
 			throw new PriorityQueueFullException();
-		int i = 0;
-		while (queue[i] != null)
-			i++;
-		queue[i] = fl;
-		
-		//For loop to compare different items within queue to maintain shape and order
-		for (int j = i + 1; j < numItems; j++) {
-			if (cmp.compare(queue[i], queue[j]) < 0) {
-				FileLine temp = queue[i];
-				queue[i] = queue[j];
-				queue[j] = temp;
-				i++;
-			} else
-				break;
-		}
+
+		queue[++numItems] = fl;
+
+		// heapify till the top
+		int curr = numItems;
+		while (reheapify(curr /= 2) > 0);
+	}
+
+	public boolean isEmpty() {
+		// TODO
+		return (numItems == 0);
 	}
 
 	/**
-	 * Checks if the queue is empty
-	 * @return true if empty, false if not
+	 * Compare the parent at index with its children to adjust the three nodes
+	 * so that parent <= left <= right
+	 * 
+	 * @param parent
+	 *            the index of the parent
+	 * @return next index to be altered, 0 if done
 	 */
-	public boolean isEmpty() {
-		return (numItems == 0);
+	private int reheapify(int parent) {
+		// cannot reheapify 0
+		if (parent == 0)
+			return 0;
+
+		int left = parent * 2;
+		int right = parent * 2 + 1;
+		int next = 0;
+
+		// if right exists and left > right, swap
+		if (right <= numItems && cmp.compare(queue[left], queue[right]) > 0) {
+			swap(left, right);
+			next = right;
+		}
+
+		// if left exists and parent > left, swap
+		if (left <= numItems && cmp.compare(queue[parent], queue[left]) > 0) {
+			swap(parent, left);
+			next = left;
+		}
+
+		return next;
 	}
+	
+	/**
+     * Swaps two elements of the line array
+     * @param i the first index to be swapped
+     * @param j the second index to be swapped
+     */
+    private void swap(int i, int j) {
+    	FileLine tmp = queue[i];
+    	queue[i] = queue[j];
+    	queue[j] = tmp;
+    }
 }

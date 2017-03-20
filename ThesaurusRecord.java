@@ -1,3 +1,4 @@
+
 /////////////////////////////////////////////////////////////////////////////
 // Semester:         CS367 Spring 2017
 // PROJECT:          team41_p3
@@ -20,15 +21,14 @@ import java.util.Comparator;
  */
 
 public class ThesaurusRecord extends Record {
-	
-	//String to use for the word later
+	// TODO declare data structures required
+	FileLine line;
 	private String word;
-	//ArrayList used to add and remove synonyms 
 	private ArrayList<String> synonyms;
 
 	/**
-	 * Constructor for the ThesaurusRecord class that passes its parameter to the parent
-	 * constructor and calls clear.
+	 * Constructs a new ThesaurusRecord by passing the parameter to the parent
+	 * constructor and then calling the clear method()
 	 */
 	public ThesaurusRecord(int numFiles) {
 		super(numFiles);
@@ -36,19 +36,15 @@ public class ThesaurusRecord extends Record {
 	}
 
 	/**
-	 * Comparator class that behaves much like the default, but is applied to the FileLines'
-	 * Strings up until the colon. 
+	 * This Comparator should simply behave like the default (lexicographic)
+	 * compareTo() method for Strings, applied to the portions of the FileLines'
+	 * Strings up to the ":" The getComparator() method of the ThesaurusRecord
+	 * class will simply return an instance of this class.
 	 */
 	private class ThesaurusLineComparator implements Comparator<FileLine> {
-		/**
-		 * Method to compare the two FileLines passed in 
-		 * @return the result of the comparison of the two FileLines' strings
-		 */
 		public int compare(FileLine l1, FileLine l2) {
-			
-			//String to store the first passed in FileLine's string
+
 			String s1 = l1.getString();
-			//String to store the second passed in FileLine's string
 			String s2 = l2.getString();
 
 			s1 = s1.split(":")[0];
@@ -57,11 +53,7 @@ public class ThesaurusRecord extends Record {
 			return s1.compareTo(s2); // compares the word of each fileline
 
 		}
-		
-		/**
-		 * Method to check if something is equal to the object passed in
-		 * @return true if it does equal the passed in object, false if not
-		 */
+
 		public boolean equals(Object o) {
 			return this.equals(o);
 		}
@@ -76,7 +68,8 @@ public class ThesaurusRecord extends Record {
 	}
 
 	/**
-	 * Method to set the word to null, and clears the arrayList of synonyms
+	 * This method should (1) set the word to null and (2) empty the list of
+	 * synonyms.
 	 */
 	public void clear() {
 		word = null;
@@ -84,8 +77,9 @@ public class ThesaurusRecord extends Record {
 	}
 
 	/**
-	 * Method to parse the list of synonyms in the FileLine that is passed in
-	 * and insert any synonyms not already in the ThesaurusRecord's list.
+	 * This method should parse the list of synonyms contained in the given
+	 * FileLine and insert any which are not already found in this
+	 * ThesaurusRecord's list of synonyms.
 	 */
 	public void join(FileLine w) {
 
@@ -111,17 +105,16 @@ public class ThesaurusRecord extends Record {
 		}
 		
 		Collections.sort(synonyms);
+		
+		// TODO implement join() functionality
 	}
 
 	/**
-	 * toString method for the ThesaurusRecord class, generates the string representation
-	 * of the class
-	 * @return returnString, returns the properly formatted synonyms with word
+	 * See the assignment description and example runs for the exact output
+	 * format.
 	 */
 	public String toString() {
-		//String to be returned
 		String returnString = "";
-		//String used to keep track of synonyms
 		String returnSynonyms = "";
 		// adds the synonyms to the return string and formats everything
 		for (int i = 0; i < synonyms.size() - 1; ++i) {
