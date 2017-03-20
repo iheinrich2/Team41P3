@@ -23,7 +23,7 @@ public class WeatherRecord extends Record {
 	FileLine line;
 	private int station;
 	int date;
-	private double[] readings;
+	private double[] readings;	//used instead of ArrayList to make the joining code easier
 
 	/**
 	 * Constructs a new WeatherRecord by passing the parameter to the parent
@@ -99,8 +99,8 @@ public class WeatherRecord extends Record {
 	 */
 	public void join(FileLine li) {
 
-		// get the station and date.
-		// merge the readings also handle the empty record merging.
+		// get the station and date
+		// merge the readings also handle the empty record merging
 		if (station == 0 && date == 0) {
 			station = Integer.parseInt(li.getString().split(",")[0]);
 			date = Integer.parseInt(li.getString().split(",")[1]);
@@ -117,18 +117,21 @@ public class WeatherRecord extends Record {
 	 */
 	public String toString() {
 		
-		
 		String returnString = "";
 		String returnReadings = "";
+		//add the stations and date data to return string
 		returnString = returnString + station + "," + date;
 		for (int i = 0; i < readings.length; ++i) {
+			//if there isn't data, a hyphen should be written
 			if (readings[i] == Double.MIN_VALUE) {
 				returnReadings = returnReadings + "," + "-";
 			}
+			//otherwise write the reading's data
 			else {
 				returnReadings = returnReadings + "," + readings[i];
 			}
 		}
+		//add the readings string to the return string
 		returnString = returnString + returnReadings;
 		
 		return returnString;
